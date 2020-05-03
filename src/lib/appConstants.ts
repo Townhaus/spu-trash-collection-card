@@ -6,8 +6,6 @@ export const API = {
   GET_COLLECTION_DAYS: 'GetCollectionDays',
 };
 
-export const CORS_ANYWHERE = 'https://cors-anywhere.herokuapp.com';
-
 type CollectionTypes = {
   [key: string]: CollectionType;
 };

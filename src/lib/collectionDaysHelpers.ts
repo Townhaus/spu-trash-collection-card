@@ -1,4 +1,3 @@
-import { API, CORS_ANYWHERE } from './appConstants';
 import { CollectionDay, CollectionType } from '../types/';
 
 export const getStartTime = (startTime = Date.now()): number => {
@@ -26,10 +25,9 @@ export const getDaysUntilDate = (date: string, startTime = new Date()): number =
   return timeDiff;
 };
 
-export const fetchCollectionDays = (address: string, startTime = getStartTime()): Promise<CollectionDay[]> => {
-  const url = `${API.URL}/${API.GET_COLLECTION_DAYS}?pAccount=&pAddress=${address}&pJustChecking=&pApp=CC&pIE=&start=${startTime}`;
-  const corsUrl = `${CORS_ANYWHERE}/${url}`;
-  return fetch(corsUrl)
+export const fetchCollectionDays = (address: string): Promise<CollectionDay[]> => {
+  const url = `http://localhost:3001/getCollectionDays?address=${address}`;
+  return fetch(url)
     .then((response) => response.json())
     .then((collectionDays) => {
       return collectionDays;
