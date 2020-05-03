@@ -1,7 +1,7 @@
 {
-  "name": "boilerplate-card",
+  "name": "spu-trash-collection-card",
   "version": "1.1.8",
-  "description": "Lovelace boilerplate-card",
+  "description": "Lovelace spu-trash-collection-card",
   "keywords": [
     "home-assistant",
     "homeassistant",
@@ -10,9 +10,9 @@
     "lovelace",
     "custom-cards"
   ],
-  "module": "boilerplate-card.js",
-  "repository": "git@github.com:custom_cards/boilerplate-card.git",
-  "author": "Ian Richardson <iantrich@gmail.com>",
+  "module": "spu-trash-collection-card.js",
+  "repository": "git@github.com:scarlettsteph07/spu-trash-collection-card.git",
+  "author": "Scarlett S <scarlettsteph07@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "custom-card-helpers": "^1.6.3",

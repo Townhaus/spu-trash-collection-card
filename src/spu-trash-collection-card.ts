@@ -38,18 +38,16 @@ console.info(
   'color: white; font-weight: bold; background: dimgray',
 );
 
-// TODO Name your custom element
-@customElement('boilerplate-card')
-export class BoilerplateCard extends LitElement {
+@customElement('spu-trash-collection-card')
+export class SpuTrashCollectionCard extends LitElement {
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
-    return document.createElement('boilerplate-card-editor') as LovelaceCardEditor;
+    return document.createElement('spu-trash-collection-card-editor') as LovelaceCardEditor;
   }
 
   public static getStubConfig(): object {
     return {};
   }
 
-  // TODO Add any properities that should cause your element to re-render here
   @property() public hass?: HomeAssistant;
   @property() private _config?: BoilerplateCardConfig;
   @property() public collectionDays: CollectionDay[] = [];
@@ -61,9 +59,12 @@ export class BoilerplateCard extends LitElement {
   @property() private daysUntilRecycling = 0;
 
   public setConfig(config: BoilerplateCardConfig): void {
-    // TODO Check for required fields and that they are of the proper format
     if (!config || config.show_error) {
       throw new Error(localize('common.invalid_configuration'));
+    }
+
+    if (!config.address) {
+      throw new Error(localize('common.missing_address'));
     }
 
     if (config.test_gui) {
@@ -71,7 +72,7 @@ export class BoilerplateCard extends LitElement {
     }
 
     this._config = {
-      name: 'Boilerplate',
+      name: 'SPU Trash Collection',
       ...config,
     };
   }

@@ -44,7 +44,7 @@ const options = {
   },
 };
 
-@customElement('boilerplate-card-editor')
+@customElement('spu-trash-collection-card-editor')
 export class BoilerplateCardEditor extends LitElement implements LovelaceCardEditor {
   @property() public hass?: HomeAssistant;
   @property() private _config?: BoilerplateCardConfig;

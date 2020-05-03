@@ -2,6 +2,7 @@
   "common": {
     "version": "Version",
     "invalid_configuration": "Invalid configuration",
+    "missing_address": "Missing address",
     "show_warning": "Show Warning"
   }
 }
