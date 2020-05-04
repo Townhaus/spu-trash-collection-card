@@ -21,7 +21,7 @@ import {
 
 import './editor';
 
-import { BoilerplateCardConfig } from './types';
+import { SpuTrashCollectionCardConfig } from './types';
 import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 
@@ -33,7 +33,7 @@ import { CollectionDay } from './types/';
 
 /* eslint no-console: 0 */
 console.info(
-  `%c  BOILERPLATE-CARD \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
+  `%c  SPU-TRASH-COLLECTION-CARD \n%c  ${localize('common.version')} ${CARD_VERSION}    `,
   'color: orange; font-weight: bold; background: black',
   'color: white; font-weight: bold; background: dimgray',
 );
@@ -49,7 +49,7 @@ export class SpuTrashCollectionCard extends LitElement {
   }
 
   @property() public hass?: HomeAssistant;
-  @property() private _config?: BoilerplateCardConfig;
+  @property() private _config?: SpuTrashCollectionCardConfig;
   @property() public collectionDays: CollectionDay[] = [];
   @property() private nextCompostCollectionDay = '';
   @property() private nextGarbageCollectionDay = '';
@@ -58,7 +58,7 @@ export class SpuTrashCollectionCard extends LitElement {
   @property() private daysUntilGarbage = 0;
   @property() private daysUntilRecycling = 0;
 
-  public setConfig(config: BoilerplateCardConfig): void {
+  public setConfig(config: SpuTrashCollectionCardConfig): void {
     if (!config || config.show_error) {
       throw new Error(localize('common.invalid_configuration'));
     }
@@ -111,7 +111,7 @@ export class SpuTrashCollectionCard extends LitElement {
           hasDoubleClick: hasAction(this._config.double_tap_action),
         })}
         tabindex="0"
-        aria-label=${`Boilerplate: ${this._config.entity}`}
+        aria-label=${`SPU trash collection: ${this._config.entity}`}
       >
         <div class="trash-collection-card">
           <table class="trash-collection-card__table">

@@ -1,6 +1,6 @@
 import { ActionConfig } from 'custom-card-helpers';
 
-export interface BoilerplateCardConfig {
+export interface SpuTrashCollectionCardConfig {
   address: string;
   type: string;
   name?: string;
