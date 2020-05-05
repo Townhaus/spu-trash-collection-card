@@ -27,9 +27,7 @@ import { CARD_VERSION } from './const';
 
 import { localize } from './localize/localize';
 
-import { COLLECTION_TYPES } from './lib/appConstants';
-import { getNexCollectiontDay, getDaysUntilDate, fetchCollectionDays } from './lib/collectionDaysHelpers.js';
-import { CollectionDay } from './types/';
+import { formatDate, getDaysUntilDate } from './lib/collectionDaysHelpers.js';
 
 /* eslint no-console: 0 */
 console.info(
@@ -50,7 +48,6 @@ export class SpuTrashCollectionCard extends LitElement {
 
   @property() public hass?: HomeAssistant;
   @property() private _config?: SpuTrashCollectionCardConfig;
-  @property() public collectionDays: CollectionDay[] = [];
   @property() private nextCompostCollectionDay = '';
   @property() private nextGarbageCollectionDay = '';
   @property() private nextRecyclingCollectionDay = '';
@@ -63,8 +60,8 @@ export class SpuTrashCollectionCard extends LitElement {
       throw new Error(localize('common.invalid_configuration'));
     }
 
-    if (!config.address) {
-      throw new Error(localize('common.missing_address'));
+    if (!config.collection_days) {
+      throw new Error(localize('common.collection_days'));
     }
 
     if (config.test_gui) {
@@ -73,6 +70,11 @@ export class SpuTrashCollectionCard extends LitElement {
 
     this._config = {
       name: 'SPU Trash Collection',
+      collection_days: {
+        compost: '',
+        garbage: '',
+        recycling: '',
+      },
       ...config,
     };
   }
@@ -83,7 +85,7 @@ export class SpuTrashCollectionCard extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this._fetchCollectionDays();
+    this._setCollectionDays();
   }
 
   protected render(): TemplateResult | void {
@@ -117,21 +119,27 @@ export class SpuTrashCollectionCard extends LitElement {
           <table class="trash-collection-card__table">
             <thead>
               <tr>
-                <th><ha-icon id="lock" icon="mdi:leaf" /></th>
-                <th><ha-icon id="lock" icon="mdi:delete" /></th>
-                <th><ha-icon id="lock" icon="mdi:recycle" /></th>
+                <th><ha-icon class="trash-collection-card__icon" id="leaf" icon="mdi:leaf" /></th>
+                <th><ha-icon class="trash-collection-card__icon" id="delete" icon="mdi:delete" /></th>
+                <th><ha-icon class="trash-collection-card__icon" id="recycle" icon="mdi:recycle" /></th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>${this.nextCompostCollectionDay || '-'}</td>
-                <td>${this.nextGarbageCollectionDay || '-'}</td>
-                <td>${this.nextRecyclingCollectionDay || '-'}</td>
+                <td>${formatDate(this.nextCompostCollectionDay) || '-'}</td>
+                <td>${formatDate(this.nextGarbageCollectionDay) || '-'}</td>
+                <td>${formatDate(this.nextRecyclingCollectionDay) || '-'}</td>
               </tr>
               <tr>
-                <td>in ${this.daysUntilCompost || '-'} days</td>
-                <td>in ${this.daysUntilGarbage || '-'} days</td>
-                <td>in ${this.daysUntilRecycling || '-'} days</td>
+                <td>
+                  in ${this.daysUntilCompost} ${this.daysUntilCompost === 1 ? 'day' : 'days'}
+                </td>
+                <td>
+                  in ${this.daysUntilGarbage} ${this.daysUntilGarbage === 1 ? 'day' : 'days'}
+                </td>
+                <td>
+                  in ${this.daysUntilRecycling} ${this.daysUntilRecycling === 1 ? 'day' : 'days'}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -140,23 +148,15 @@ export class SpuTrashCollectionCard extends LitElement {
     `;
   }
 
-  private _fetchCollectionDays(): void {
-    if (this._config) {
-      const { address } = this._config;
-      fetchCollectionDays(address)
-        .then((collectionDays) => {
-          const { COMPOST, GARBAGE, RECYCLING } = COLLECTION_TYPES;
-          this.collectionDays = collectionDays;
-          this.nextCompostCollectionDay = getNexCollectiontDay(this.collectionDays, COMPOST);
-          this.nextGarbageCollectionDay = getNexCollectiontDay(this.collectionDays, GARBAGE);
-          this.nextRecyclingCollectionDay = getNexCollectiontDay(this.collectionDays, RECYCLING);
-          this.daysUntilCompost = getDaysUntilDate(this.nextCompostCollectionDay);
-          this.daysUntilGarbage = getDaysUntilDate(this.nextGarbageCollectionDay);
-          this.daysUntilRecycling = getDaysUntilDate(this.nextRecyclingCollectionDay);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+  private _setCollectionDays(): void {
+    if (this._config && this.hass) {
+      const { compost, garbage, recycling } = this._config.collection_days;
+      this.nextCompostCollectionDay = this.hass.states[compost] ? this.hass.states[compost].state : '';
+      this.nextGarbageCollectionDay = this.hass.states[garbage] ? this.hass.states[garbage].state : '';
+      this.nextRecyclingCollectionDay = this.hass.states[recycling] ? this.hass.states[recycling].state : '';
+      this.daysUntilCompost = getDaysUntilDate(this.nextCompostCollectionDay);
+      this.daysUntilGarbage = getDaysUntilDate(this.nextGarbageCollectionDay);
+      this.daysUntilRecycling = getDaysUntilDate(this.nextRecyclingCollectionDay);
     }
   }
 
