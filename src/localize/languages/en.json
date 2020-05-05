@@ -2,6 +2,7 @@
   "common": {
     "version": "Version",
     "invalid_configuration": "Invalid configuration",
+    "collection_days": "Missing collection days",
     "show_warning": "Show Warning"
   }
 }

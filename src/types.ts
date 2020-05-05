@@ -1,7 +1,7 @@
 import { ActionConfig } from 'custom-card-helpers';
 
-// TODO Add your configuration elements here for type-checking
-export interface BoilerplateCardConfig {
+export interface SpuTrashCollectionCardConfig {
+  collection_days: CollectionDays;
   type: string;
   name?: string;
   show_warning?: boolean;
@@ -11,4 +11,10 @@ export interface BoilerplateCardConfig {
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;
+}
+
+export interface CollectionDays {
+  compost: string;
+  garbage: string;
+  recycling: string;
 }
