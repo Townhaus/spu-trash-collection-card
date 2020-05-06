@@ -18,3 +18,12 @@ export interface CollectionDays {
   garbage: string;
   recycling: string;
 }
+
+export interface CollectionDaysInfo {
+  collectionType: string;
+  haEntityName: string;
+  icon?: string;
+  nextCollectionDate: string; // ISO YYYMMDD
+  nextCollectionDateString: string; // Month Dth YYYY
+  daysUntilCollectionDay: number;
+}

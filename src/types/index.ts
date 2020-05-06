@@ -12,4 +12,4 @@ export type CollectionDay = {
   url: null;
 };
 
-export type CollectionType = 'FoodAndYardWaste' | 'Garbage' | 'Recycling';
+export type CollectionType = 'compost' | 'garbage' | 'recycling';

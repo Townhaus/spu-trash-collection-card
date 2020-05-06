@@ -21,13 +21,13 @@ import {
 
 import './editor';
 
-import { SpuTrashCollectionCardConfig } from './types';
+import { SpuTrashCollectionCardConfig, CollectionDaysInfo } from './types';
 import { actionHandler } from './action-handler-directive';
 import { CARD_VERSION } from './const';
 
 import { localize } from './localize/localize';
 
-import { formatDate, getDaysUntilDate } from './lib/collectionDaysHelpers.js';
+import { getCollectionDaysInfo } from './lib/collectionDaysHelpers.js';
 
 /* eslint no-console: 0 */
 console.info(
@@ -48,12 +48,7 @@ export class SpuTrashCollectionCard extends LitElement {
 
   @property() public hass?: HomeAssistant;
   @property() private _config?: SpuTrashCollectionCardConfig;
-  @property() private nextCompostCollectionDay = '';
-  @property() private nextGarbageCollectionDay = '';
-  @property() private nextRecyclingCollectionDay = '';
-  @property() private daysUntilCompost = 0;
-  @property() private daysUntilGarbage = 0;
-  @property() private daysUntilRecycling = 0;
+  @property() private collectionDaysInfo: CollectionDaysInfo[] = [];
 
   public setConfig(config: SpuTrashCollectionCardConfig): void {
     if (!config || config.show_error) {
@@ -119,27 +114,29 @@ export class SpuTrashCollectionCard extends LitElement {
           <table class="trash-collection-card__table">
             <thead>
               <tr>
-                <th><ha-icon class="trash-collection-card__icon" id="leaf" icon="mdi:leaf" /></th>
-                <th><ha-icon class="trash-collection-card__icon" id="delete" icon="mdi:delete" /></th>
-                <th><ha-icon class="trash-collection-card__icon" id="recycle" icon="mdi:recycle" /></th>
+                ${this.collectionDaysInfo.map(({ icon }) => {
+                  return html`
+                    <th><ha-icon class="trash-collection-card__icon" id=${icon} icon="mdi:${icon}" /></th>
+                  `;
+                })}
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>${formatDate(this.nextCompostCollectionDay) || '-'}</td>
-                <td>${formatDate(this.nextGarbageCollectionDay) || '-'}</td>
-                <td>${formatDate(this.nextRecyclingCollectionDay) || '-'}</td>
+                ${this.collectionDaysInfo.map(({ nextCollectionDateString }) => {
+                  return html`
+                    <td>${nextCollectionDateString || '-'}</td>
+                  `;
+                })}
               </tr>
               <tr>
-                <td>
-                  in ${this.daysUntilCompost} ${this.daysUntilCompost === 1 ? 'day' : 'days'}
-                </td>
-                <td>
-                  in ${this.daysUntilGarbage} ${this.daysUntilGarbage === 1 ? 'day' : 'days'}
-                </td>
-                <td>
-                  in ${this.daysUntilRecycling} ${this.daysUntilRecycling === 1 ? 'day' : 'days'}
-                </td>
+                ${this.collectionDaysInfo.map(({ daysUntilCollectionDay }) => {
+                  return html`
+                    <td>
+                      ${daysUntilCollectionDay === 0 ? 'Today' : `in ${daysUntilCollectionDay}days`}
+                    </td>
+                  `;
+                })}
               </tr>
             </tbody>
           </table>
@@ -150,13 +147,7 @@ export class SpuTrashCollectionCard extends LitElement {
 
   private _setCollectionDays(): void {
     if (this._config && this.hass) {
-      const { compost, garbage, recycling } = this._config.collection_days;
-      this.nextCompostCollectionDay = this.hass.states[compost] ? this.hass.states[compost].state : '';
-      this.nextGarbageCollectionDay = this.hass.states[garbage] ? this.hass.states[garbage].state : '';
-      this.nextRecyclingCollectionDay = this.hass.states[recycling] ? this.hass.states[recycling].state : '';
-      this.daysUntilCompost = getDaysUntilDate(this.nextCompostCollectionDay);
-      this.daysUntilGarbage = getDaysUntilDate(this.nextGarbageCollectionDay);
-      this.daysUntilRecycling = getDaysUntilDate(this.nextRecyclingCollectionDay);
+      this.collectionDaysInfo = getCollectionDaysInfo(this._config.collection_days, this.hass);
     }
   }
 
@@ -194,11 +185,13 @@ export class SpuTrashCollectionCard extends LitElement {
         height: 30px;
         margin: 0 10px;
       }
-      th,
-      td {
-        border-bottom: #2e3440 1px solid;
+      th {
         text-align: center;
         height: 50px;
+      }
+      td {
+        text-align: center;
+        height: 25px;
       }
     `;
   }
