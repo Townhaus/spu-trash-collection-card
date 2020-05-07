@@ -64,7 +64,7 @@ export class SpuTrashCollectionCard extends LitElement {
     }
 
     this._config = {
-      name: 'SPU Trash Collection',
+      name: '',
       collection_days: {
         compost: '',
         garbage: '',
@@ -111,35 +111,17 @@ export class SpuTrashCollectionCard extends LitElement {
         aria-label=${`SPU trash collection: ${this._config.entity}`}
       >
         <div class="trash-collection-card">
-          <table class="trash-collection-card__table">
-            <thead>
-              <tr>
-                ${this.collectionDaysInfo.map(({ icon }) => {
-                  return html`
-                    <th><ha-icon class="trash-collection-card__icon" id=${icon} icon="mdi:${icon}" /></th>
-                  `;
-                })}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                ${this.collectionDaysInfo.map(({ nextCollectionDateString }) => {
-                  return html`
-                    <td>${nextCollectionDateString || '-'}</td>
-                  `;
-                })}
-              </tr>
-              <tr>
-                ${this.collectionDaysInfo.map(({ daysUntilCollectionDay }) => {
-                  return html`
-                    <td>
-                      ${daysUntilCollectionDay === 0 ? 'Today' : `in ${daysUntilCollectionDay}days`}
-                    </td>
-                  `;
-                })}
-              </tr>
-            </tbody>
-          </table>
+          ${this.collectionDaysInfo.map(({ icon, nextCollectionDateString, daysUntilCollectionDay }) => {
+            return html`
+              <div class="trash-collection-card__day">
+                <ha-icon class="trash-collection-card__icon" id=${icon} icon="mdi:${icon}"></ha-icon>
+                <div class="trash-collection-card__text">${nextCollectionDateString || '-'}</div>
+                <div class="trash-collection-card__text">
+                  ${daysUntilCollectionDay === 0 ? 'Today' : `in ${daysUntilCollectionDay} days`}
+                </div>
+              </div>
+            `;
+          })}
         </div>
       </ha-card>
     `;
@@ -161,37 +143,40 @@ export class SpuTrashCollectionCard extends LitElement {
     return css`
       .warning {
         display: block;
-        color: black;
-        background-color: #fce588;
+        color: var(--primary-text-color);
+        background-color: var(--label-badge-yellow);
         padding: 8px;
       }
       :host {
-        font-family: 'Roboto', sans-serif;
+        font-family: var(--primary-font-family);
       }
       .trash-collection-card {
         width: 100%;
-        padding: 0 25px 25px 25px;
+        padding: 16px;
         box-sizing: border-box;
-        background: #eceff4;
-        color: #2e3440;
-        border-radius: 5px;
+        font-size: 1em;
+        background-color: var(--paper-card-background-color);
+        color: var(--primary-text-color);
+        display: flex;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
       }
-      .trash-collection-card__table {
-        width: 100%;
-        font-size: 16px;
+      .trash-collection-card__day {
+        width: 100px;
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin: 0 10px;
       }
       .trash-collection-card__icon {
         width: 30px;
         height: 30px;
-        margin: 0 10px;
+        margin: 10px;
       }
-      th {
-        text-align: center;
-        height: 50px;
-      }
-      td {
-        text-align: center;
-        height: 25px;
+      .trash-collection-card__text {
+        margin-bottom: 5px;
       }
     `;
   }
